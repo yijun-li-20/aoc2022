@@ -97,18 +97,16 @@ int main(int argc, char *argv[])
             stack<pair<int, int> > st;
             for (size_t j = 0; j < c; j++)
             {
-                if (st.empty() || st.top().first > input[i][j]-'0')
+                if (!st.empty() && st.top().first <= input[i][j]-'0')
                 {
-                    st.push(make_pair(input[i][j]-'0', j));
-                }
-                else {
                     while(!st.empty() && st.top().first <= input[i][j]-'0') {
                         int idx = st.top().second;
                         st.pop();
                         dist[i][idx] *= (j-idx);
                     }
-                    st.push(make_pair(input[i][j]-'0', j));
+                    
                 }
+                st.push(make_pair(input[i][j]-'0', j));
             }
             if(!st.empty()) {
                 int idx = st.top().second;
@@ -122,18 +120,15 @@ int main(int argc, char *argv[])
             
             for (size_t j = c-1; j != -1; j--)
             {
-                if (st.empty() || st.top().first > input[i][j]-'0')
+                if (!st.empty() && st.top().first <= input[i][j]-'0')
                 {
-                    st.push(make_pair(input[i][j]-'0', j));
-                }
-                else {
                     while(!st.empty() && st.top().first <= input[i][j]-'0') {
                         int idx = st.top().second;
                         st.pop();
                         dist[i][idx] *= idx-j;
                     }
-                    st.push(make_pair(input[i][j]-'0', j));
                 }
+                st.push(make_pair(input[i][j]-'0', j));
             }
             if(!st.empty()) {
                 int idx = st.top().second;
@@ -150,19 +145,16 @@ int main(int argc, char *argv[])
             stack<pair<int, int> > st;
             for (size_t i = 0; i < r; i++)
             {
-                if (st.empty() || st.top().first > input[i][j]-'0')
+                if (!st.empty() && st.top().first <= input[i][j]-'0')
                 {
-                    st.push(make_pair(input[i][j]-'0', i));
-                }
-                else {
                     while(!st.empty() && st.top().first <= input[i][j]-'0') {
                         int idx = st.top().second;
                         st.pop();
                         dist[idx][j] *= (i-idx);
                         res = max(res, dist[idx][j]);
                     }
-                    st.push(make_pair(input[i][j]-'0', i));
                 }
+                st.push(make_pair(input[i][j]-'0', i));
             }
             if(!st.empty()) {
                 int idx = st.top().second;
@@ -177,19 +169,16 @@ int main(int argc, char *argv[])
             
             for (size_t i = r-1; i != -1; i--)
             {
-                if (st.empty() || st.top().first > input[i][j]-'0')
+                if (!st.empty() && st.top().first <= input[i][j]-'0')
                 {
-                    st.push(make_pair(input[i][j]-'0', i));
-                }
-                else {
                     while(!st.empty() && st.top().first <= input[i][j]-'0') {
                         int idx = st.top().second;
                         st.pop();
                         dist[idx][j] *= idx-i;
                         res = max(res, dist[idx][j]);
                     }
-                    st.push(make_pair(input[i][j]-'0', i));
                 }
+                st.push(make_pair(input[i][j]-'0', i));
             }
             if(!st.empty()) {
                 int idx = st.top().second;
