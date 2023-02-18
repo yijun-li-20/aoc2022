@@ -67,6 +67,15 @@ void recurs(int64_t& count, Dir* node) {
     }
 }
 
+void findMin(int64_t bar, int64_t& count, Dir* node) {
+    if(node->size >= bar && node->size < count) {
+        count = node->size;
+    }
+    for(auto& n: node->files) {
+        if (!n->file) findMin(bar, count, n.get());
+    }
+}
+
 int main(int argc, char *argv[])
 {
     string filename = argv[1];
@@ -95,11 +104,6 @@ int main(int argc, char *argv[])
                 curr = root.get();
             }
             else { // go to a child directory
-                // std::cout << "DBG: " << curr->name;
-                // for(auto &f: curr->files)  {
-                //     std::cout <<  "\n" << f->name;
-                // }
-                // std::cout << "\n";
                 bool flag = false;
                 for (auto& chd: curr->files)
                 {
@@ -109,27 +113,16 @@ int main(int argc, char *argv[])
             }
             break;
         case 1: // ls
-            // going to display the children files and directories
             break;
         case 2: // dir ..
             next = item.substr(4, item.length()-4);
             curr->addDir(next);
-
-            // std::cout << "DBG: " << curr->name;
-            //     for(auto &f: curr->files)  {
-            //         std::cout <<  "\n" << f->name;
-            //     }
             break;
         case 3: // file info
             de = item.find(' ');
             fsize = std::stoi(item.substr(0, de));
             next = item.substr(de+1, item.length()-de-1);
             curr->addFile(next, fsize);
-
-            // std::cout << "DBG: " << curr->name;
-            //     for(auto &f: curr->files)  {
-            //         std::cout <<  "\n" << f->name;
-            //     }
             break;
         }
     }
@@ -146,6 +139,11 @@ int main(int argc, char *argv[])
     }
     case 1:
     {
+        curr = root.get();
+        recurs(res, curr);
+        int64_t bar = root->size - 40000000;
+        res = 30000000; // init as worst
+        findMin(bar, res, curr);
         break;
     }
     default:
