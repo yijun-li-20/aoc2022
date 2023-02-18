@@ -15,7 +15,7 @@ public:
     string name;
     int size = 0;
     bool file = false;
-    set<Dir*> files = {};
+    vector<std::shared_ptr<Dir>> files = {};
     Dir* parent = nullptr;
 
     Dir(string _name): name(_name), file(true)  {}
@@ -24,12 +24,12 @@ public:
     void addFile(string f, int s) {
         auto temp = std::make_shared<Dir>(f);
         temp->size = s;
-        files.emplace(temp.get());
+        files.emplace_back(temp);
     }
 
     void addDir(string f) {
         auto temp = std::make_shared<Dir>(f, this);
-        files.emplace(temp.get());
+        files.emplace_back(temp);
     }
 
     int getSize() {
@@ -55,12 +55,15 @@ int type(string c) {
     return -1;
 }
 
-void recurs(int& count, Dir* node) {
+void recurs(int64_t& count, Dir* node) {
+    if(node->size == 0) {
+        node->computeSize();
+    }
     if(node->size <= 100000) {
-        count ++;
+        count += node->size;
     }
     for(auto& n: node->files) {
-        recurs(count, n);
+        if (!n->file) recurs(count, n.get());
     }
 }
 
@@ -92,19 +95,17 @@ int main(int argc, char *argv[])
                 curr = root.get();
             }
             else { // go to a child directory
-
-
-                std::cout << "DBG: ";
-            for(auto &f:curr->files)  {
-                std::cout <<  "\n" << f->name;
-            }
-            std::cout << "\n";
+                // std::cout << "DBG: " << curr->name;
+                // for(auto &f: curr->files)  {
+                //     std::cout <<  "\n" << f->name;
+                // }
+                // std::cout << "\n";
                 bool flag = false;
                 for (auto& chd: curr->files)
                 {
-                    if(chd->name == next && !chd->file) { curr = chd; flag = true;}
+                    if(chd->name == next && !chd->file) { curr = chd.get(); flag = true;}
                 }
-                if (!flag) std::cerr << curr->name << "bad dir\n";
+                if (!flag) std::cerr << curr->name << ": bad dir\n";
             }
             break;
         case 1: // ls
@@ -113,18 +114,28 @@ int main(int argc, char *argv[])
         case 2: // dir ..
             next = item.substr(4, item.length()-4);
             curr->addDir(next);
+
+            // std::cout << "DBG: " << curr->name;
+            //     for(auto &f: curr->files)  {
+            //         std::cout <<  "\n" << f->name;
+            //     }
             break;
         case 3: // file info
             de = item.find(' ');
             fsize = std::stoi(item.substr(0, de));
             next = item.substr(de+1, item.length()-de-1);
             curr->addFile(next, fsize);
+
+            // std::cout << "DBG: " << curr->name;
+            //     for(auto &f: curr->files)  {
+            //         std::cout <<  "\n" << f->name;
+            //     }
             break;
         }
     }
     
-    int result = 0;
-    int& res = result;
+    int64_t result = 0;
+    int64_t& res = result;
     switch (stoi(argv[2]))
     {
     case 0:
