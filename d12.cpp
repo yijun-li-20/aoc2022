@@ -13,7 +13,7 @@ using namespace std;
 
 struct func {
    size_t operator()(const Coord &v) const {
-     return v.first*200+v.second;
+     return v.first*199+v.second;
    }
 };
 
@@ -92,23 +92,19 @@ int main(int argc, char *argv[])
                         }
                         // search for 'a': ((21, 0), 1)
                         pair<Coord, int> search = {{cur.first+i, cur.second+j}, step+1};
-                        if(visited.count({cur.first+i, cur.second+j}) == 0 && 
-                            (int)input[cur.first+i][cur.second+j] - level <= 1 && 
+                        if((int)input[cur.first+i][cur.second+j] - level <= 1 && 
                             std::find(next.begin(), next.end(), search)==next.end()) 
                         {
                             next.push_back({{cur.first+i, cur.second+j}, step+1});
                         }
                     }
                 }
-                // std::cout << "q: \t";
-                // printq(q, input);
             }
             std::cout << "next: \n";
             printq(next, input);
             q = next;
             next.clear();    
         }
-        
         break;
     }
     case 1:
