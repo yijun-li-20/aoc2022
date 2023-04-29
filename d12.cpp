@@ -90,7 +90,6 @@ int main(int argc, char *argv[])
                             flag = true;
                             break;
                         }
-                        // search for 'a': ((21, 0), 1)
                         pair<Coord, int> search = {{cur.first+i, cur.second+j}, step+1};
                         if((int)input[cur.first+i][cur.second+j] - level <= 1 && 
                             std::find(next.begin(), next.end(), search)==next.end()) 
