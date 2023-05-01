@@ -60,49 +60,41 @@ int main(int argc, char *argv[])
     {
     case 0:
     {
-        deque<pair<Coord, int>> q({{start, 0}}), next({});
-        int level = (int)'a' - 1;
+        deque<vector<Coord>> q({{start}});
+        int level = 0;
         bool flag = false;
-
-        while (!q.empty() && !flag)
+        int qsize, vsize, r_, c_;
+        while (!q.empty())
         {  
-            int qsize = q.size();
-            for (size_t cand = 0; cand < qsize; cand++)
-            {
-                auto temp = q.front();
-                q.pop_front();
-                Coord cur = temp.first;
-                if(visited.count(cur) != 0) {
-                    continue;
-                }
-                visited.insert(cur);
-                int step = temp.second;
-                if(step) {
-                    level = (int)input[cur.first][cur.second];
-                }
-                for (auto& ij: directions)
-                {
-                    int i = ij.first, j = ij.second;
-                    if(valid(r, c, cur.first+i, cur.second+j)){
-                        if(end.first == cur.first+i && end.second == cur.second+j &&
-                            level == (int)'z') {
-                            res = step + 1;
-                            flag = true;
-                            break;
-                        }
-                        pair<Coord, int> search = {{cur.first+i, cur.second+j}, step+1};
-                        if((int)input[cur.first+i][cur.second+j] - level <= 1 && 
-                            std::find(next.begin(), next.end(), search)==next.end()) 
-                        {
-                            next.push_back({{cur.first+i, cur.second+j}, step+1});
-                        }
-                    }
-                }
+            qsize = q.size();
+            auto curr = q.front();
+            vsize = curr.size();
+            q.pop_front();
+            r_ = curr[vsize-1].first;
+            c_ = curr[vsize-1].second;
+            if(r_ == end.first && c_ == end.second) {
+                res = vsize-1;
+                break;
             }
-            std::cout << "next: \n";
-            printq(next, input);
-            q = next;
-            next.clear();    
+            if(curr.size() > 1) {
+                level = input[r_][c_]- 'a';
+            }
+            if (visited.count({r_, c_}) == 0)
+            {
+                visited.insert({r_, c_});
+                for (auto& ij: directions) {
+                    int i = ij.first, j = ij.second;
+                    if(valid(r, c, r_+i, c_+j)){
+                        int next_level = input[r_+i][c_+j]-'a';
+                        if(next_level == 'E'-'a') { next_level = 25; }
+                        if(next_level<=level+1) {
+                            auto path = vector<Coord>(curr);
+                            path.push_back({r_+i, c_+j});
+                            q.push_back(path);
+                        }
+                    } 
+                }
+            }  
         }
         break;
     }
