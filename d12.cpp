@@ -100,6 +100,42 @@ int main(int argc, char *argv[])
     }
     case 1:
     {
+        deque<vector<Coord>> q({{end}});
+        int level = 25;
+        bool flag = false;
+        int qsize, vsize, r_, c_;
+        while (!q.empty())
+        {  
+            qsize = q.size();
+            auto curr = q.front();
+            vsize = curr.size();
+            q.pop_front();
+            r_ = curr[vsize-1].first;
+            c_ = curr[vsize-1].second;
+            if(input[r_][c_] == 'a') {
+                res = vsize-1;
+                break;
+            }
+            if(curr.size() > 1) {
+                level = input[r_][c_]- 'a';
+            }
+            if (visited.count({r_, c_}) == 0)
+            {
+                visited.insert({r_, c_});
+                for (auto& ij: directions) {
+                    int i = ij.first, j = ij.second;
+                    if(valid(r, c, r_+i, c_+j)){
+                        int next_level = input[r_+i][c_+j]-'a';
+                        if(next_level == 'S'-'a') { next_level = 0; }
+                        if(next_level>=level-1) {
+                            auto path = vector<Coord>(curr);
+                            path.push_back({r_+i, c_+j});
+                            q.push_back(path);
+                        }
+                    } 
+                }
+            }  
+        }
         break;
     }
     default:
